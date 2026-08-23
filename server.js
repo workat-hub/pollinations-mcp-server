@@ -34,14 +34,11 @@ function buildServer() {
       params.set("nologo", "true");
       if (model) params.set("model", model);
       if (seed !== undefined) params.set("seed", String(seed));
-      // Optional: set POLLINATIONS_API_KEY as an env var on the host for a
-      // higher rate limit. Without it, Pollinations still serves anonymous
-      // requests but under a much tighter per-IP hourly limit.
-      if (process.env.POLLINATIONS_API_KEY) {
-        params.set("key", process.env.POLLINATIONS_API_KEY);
-      }
 
-      const url = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?${params.toString()}`;
+      // The classic image.pollinations.ai/prompt endpoint is still free and
+      // keyless (verified live). Pollinations' newer gen.pollinations.ai/image
+      // endpoint now requires an API key, so we deliberately use the legacy one.
+      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?${params.toString()}`;
 
       const res = await fetch(url, { signal: AbortSignal.timeout(60_000) });
       if (!res.ok) {
